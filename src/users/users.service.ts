@@ -11,8 +11,6 @@ export class UsersService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async findAll() {
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-
     const result = await this.userRepository.findAll();
 
     return result.map((item) => new UserEntity(item.user.properties));

@@ -26,9 +26,11 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto) {
+    
     const userInterface: UserInterface = {
       ...createUserDto,
       id: uuid(),
+      // shameless
       birthday: Date.now(),
     };
 

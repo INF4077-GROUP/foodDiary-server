@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Neo4jService } from 'neo4j-module';
+import { UpdateUserDto } from 'src/users/dto';
 import { USER_NODE } from 'src/users/users.constant';
 
 @Injectable()
@@ -52,6 +53,27 @@ export class UserRepository {
       .createNode(UserRepository.user, USER_NODE, {
         ...userData,
       })
+      .return(UserRepository.user)
+      .run();
+
+    return result;
+  }
+
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const query = this.neo4jService.initQuery();
+
+    const { name, email, dateOfBirth, description } = updateUserDto;
+
+    const result = await query
+      .matchNode(UserRepository.user, USER_NODE, { id })
+      .raw(
+        `
+          SET user.name = '${name}'
+          SET user.email = '${email}'
+          SET user.dateOfBirth = ${dateOfBirth}
+          SET user.description = '${description}'
+      `,
+      )
       .return(UserRepository.user)
       .run();
 

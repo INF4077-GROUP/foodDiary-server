@@ -1,9 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DEFAULT_ERROR_MESSAGE } from 'src/common/common.constant';
-import { CreateUserDto } from './dto';
-import { v4 as uuid } from 'uuid';
 import { UserRepository } from 'src/domain/nodes/user/user.service';
-import { UserInterface } from './interfaces';
+import { UpdateUserDto } from './dto';
 import { UserEntity } from './entities';
 
 @Injectable()
@@ -16,29 +13,17 @@ export class UsersService {
     return result.map((item) => new UserEntity(item.user.properties));
   }
 
-  async findOneById(id: string) {
-    const result = await this.userRepository.findOneById(id);
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const [data] = await this.userRepository.findOneById(id);
 
-    if (!result.length)
+    if (!data)
       throw new NotFoundException(`The user with the id #${id} is not found `);
 
-    return new UserEntity(result[0].user.properties);
-  }
+    const [updataData] = await this.userRepository.update(id, updateUserDto);
 
-  async create(createUserDto: CreateUserDto) {
-    const userInterface: UserInterface = {
-      ...createUserDto,
-      id: uuid(),
-      birthday: Date.now(),
-    };
+    const updatedUserData = updataData.user.properties;
 
-    const result = await this.userRepository.create(userInterface);
-
-    if (result.length === 0) throw DEFAULT_ERROR_MESSAGE;
-
-    const userData = result[0].user.properties;
-
-    return new UserEntity(userData);
+    return new UserEntity(updatedUserData);
   }
 
   async delete(id: string) {

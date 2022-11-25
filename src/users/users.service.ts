@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DEFAULT_ERROR_MESSAGE } from 'src/common/common.constant';
-import { CreateUserDto, UpdateUserDto } from './dto';
+import { CreateUserDto } from './dto';
 import { v4 as uuid } from 'uuid';
 import { UserRepository } from 'src/domain/nodes/user/user.service';
 import { UserInterface } from './interfaces';

@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Neo4jService } from 'neo4j-module';
-import { UpdateUserDto } from 'src/users/dto';
-import { UserInterface } from 'src/users/interfaces';
 import { USER_NODE } from 'src/users/users.constant';
 
 @Injectable()
@@ -34,12 +32,25 @@ export class UserRepository {
     return result;
   }
 
-  async create(userInterface: UserInterface) {
+  async findOneByName(name: string) {
+    const query = this.neo4jService.initQuery();
+
+    const result = await query
+      .matchNode(UserRepository.user, USER_NODE, {
+        name,
+      })
+      .return(UserRepository.user)
+      .run();
+
+    return result;
+  }
+
+  async create<T>(userData: T) {
     const query = this.neo4jService.initQuery();
 
     const result = await query
       .createNode(UserRepository.user, USER_NODE, {
-        ...userInterface,
+        ...userData,
       })
       .return(UserRepository.user)
       .run();

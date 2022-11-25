@@ -1,10 +1,20 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { JwtGuard } from 'src/auth/guards';
 import { CreateUserDto } from './dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
 @ApiTags('Users')
+@UseGuards(JwtGuard)
 export class UserController {
   constructor(private readonly usersService: UsersService) {}
 

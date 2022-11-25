@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
+      isGlobal: true,
 
       validationSchema: Joi.object({
         DATABASE_SCHEME: Joi.string().default('bolt'),

@@ -7,9 +7,15 @@ import { UserRepository } from 'src/domain/nodes/user/user.service';
 import { AuthDto } from './dto';
 import * as argon2 from 'argon2';
 import { v4 as uuid } from 'uuid';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private configService: ConfigService,
+    private jwtService: JwtService,
+  ) {}
 
   async register(authDto: AuthDto) {
     const [nameAlreadyExist] = await this.userRepository.findOneByName(
@@ -31,9 +37,11 @@ export class AuthService {
 
     const result = await this.userRepository.create(userData);
 
-    const user = result[0].user.properties;
+    const { id: userId, name: username } = result[0].user.properties;
 
-    return user;
+    const token = await this.generateToken(userId, username);
+
+    return token;
   }
 
   async login(authDto: AuthDto) {
@@ -49,6 +57,24 @@ export class AuthService {
     if (!isPasswordMatched)
       throw new ForbiddenException('The given password is not correspond');
 
-    return user;
+    const token = await this.generateToken(user.id, user.name);
+
+    return token;
+  }
+
+  private async generateToken(userId: string, username: string) {
+    const payload = {
+      sub: userId,
+      name: username,
+    };
+
+    const secret = this.configService.get('JWT_SECRET');
+
+    const token = await this.jwtService.signAsync(payload, {
+      secret,
+      expiresIn: '3d',
+    });
+
+    return { access_token: token };
   }
 }

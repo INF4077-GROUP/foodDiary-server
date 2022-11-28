@@ -79,10 +79,19 @@ export class AuthService {
     return tokens;
   }
 
+  async logout(userId: string) {
+    const [userData] = await this.userRepository.updateHashedRefreshToken(
+      userId,
+      '',
+    );
+
+    return userData.user.properties;
+  }
+
   async jwtValidateUser(userId: string) {
     const [userData] = await this.userRepository.findOneById(userId);
 
-    if (!userData) return null;
+    if (!userData || !userData.user.properties.hashedRt) return null;
 
     const user = userData.user.properties;
 

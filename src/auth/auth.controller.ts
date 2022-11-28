@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { Public } from './decorators';
+import { GetUser, Public } from './decorators';
 import { AuthDto } from './dto';
 
 @Controller('auth')
@@ -25,7 +25,8 @@ export class AuthController {
   }
 
   @Post('logout')
-  async logout() {
-    //
+  @HttpCode(HttpStatus.OK)
+  async logout(@GetUser('id') userId: string) {
+    return this.authService.logout(userId);
   }
 }

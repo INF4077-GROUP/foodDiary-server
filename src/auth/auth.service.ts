@@ -9,6 +9,7 @@ import * as argon2 from 'argon2';
 import { v4 as uuid } from 'uuid';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { Tokens } from './types';
 @Injectable()
 export class AuthService {
   constructor(
@@ -33,48 +34,69 @@ export class AuthService {
       ...data,
       id: uuid(),
       hash,
+      hashedRt: null,
+      createdAt: Date.now(),
     };
+
+    console.log({ userData });
 
     const result = await this.userRepository.create(userData);
 
-    const { id: userId, name: username } = result[0].user.properties;
+    const user = result[0].user.properties;
 
-    const token = await this.generateToken(userId, username);
+    const tokens = await this.generateTokens(user.id, user.name);
 
-    return token;
+    const hashedRt = await argon2.hash(tokens.refresh_token);
+
+    await this.userRepository.updateHashedRefreshToken(user.id, hashedRt);
+
+    return tokens;
   }
 
-  async login(authDto: AuthDto) {
+  async login(authDto: AuthDto): Promise<Tokens> {
     const [data] = await this.userRepository.findOneByName(authDto.name);
 
     if (!data)
-      throw new NotFoundException('User with the given name is not found');
+      throw new NotFoundException('User with the given name is not found.');
 
     const user = data.user.properties;
 
     const isPasswordMatched = await argon2.verify(user.hash, authDto.password);
 
     if (!isPasswordMatched)
-      throw new ForbiddenException('The given password is not correspond');
+      throw new ForbiddenException('The given password is not correspond.');
 
-    const token = await this.generateToken(user.id, user.name);
+    const tokens = await this.generateTokens(user.id, user.name);
 
-    return token;
+    const hashedRt = await argon2.hash(tokens.refresh_token);
+
+    await this.userRepository.updateHashedRefreshToken(user.id, hashedRt);
+
+    return tokens;
   }
 
-  private async generateToken(userId: string, username: string) {
+  // helpers functions
+  private async generateTokens(
+    userId: string,
+    username: string,
+  ): Promise<Tokens> {
     const payload = {
       sub: userId,
       name: username,
     };
 
-    const secret = this.configService.get('JWT_SECRET');
+    const [access_token, refresh_token] = await Promise.all([
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.get('ACCESS_TOKEN'),
+        expiresIn: '3d',
+      }),
 
-    const token = await this.jwtService.signAsync(payload, {
-      secret,
-      expiresIn: '7d',
-    });
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.get('REFRESH_TOKEN'),
+        expiresIn: '7d',
+      }),
+    ]);
 
-    return { access_token: token };
+    return { access_token, refresh_token };
   }
 }

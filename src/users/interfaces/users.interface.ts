@@ -4,4 +4,5 @@ export interface UserInterface {
   readonly email: string;
   readonly dateOfBirth: number;
   readonly description: string;
+  readonly createdAt: number;
 }

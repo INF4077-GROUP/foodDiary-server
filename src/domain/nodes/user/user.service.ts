@@ -88,4 +88,14 @@ export class UserRepository {
       .delete(UserRepository.user)
       .run();
   }
+
+  async updateHashedRefreshToken(id: string, rtToken: string) {
+    const query = this.neo4jService.initQuery();
+
+    return await query
+      .matchNode(UserRepository.user, USER_NODE, { id })
+      .raw(`SET user.hashedRt = '${rtToken}'`)
+      .return(UserRepository.user)
+      .run();
+  }
 }

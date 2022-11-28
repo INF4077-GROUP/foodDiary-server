@@ -5,4 +5,5 @@ export interface UserInterface {
   readonly dateOfBirth: number;
   readonly description: string;
   readonly createdAt: number;
+  readonly updatedAt: number;
 }

@@ -31,14 +31,18 @@ export class AuthService {
     const hash = await argon2.hash(password);
 
     const userData = {
-      ...data,
       id: uuid(),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+
+      name: data.name,
+      email: '',
+      dateOfBirth: 0,
+      description: '',
+
       hash,
       hashedRt: null,
-      createdAt: Date.now(),
     };
-
-    console.log({ userData });
 
     const result = await this.userRepository.create(userData);
 
@@ -75,6 +79,19 @@ export class AuthService {
     return tokens;
   }
 
+  async jwtValidateUser(userId: string) {
+    const [userData] = await this.userRepository.findOneById(userId);
+
+    if (!userData) return null;
+
+    const user = userData.user.properties;
+
+    delete user.hash;
+    delete user.hashedRt;
+
+    return user;
+  }
+
   // helpers functions
   private async generateTokens(
     userId: string,
@@ -87,12 +104,12 @@ export class AuthService {
 
     const [access_token, refresh_token] = await Promise.all([
       this.jwtService.signAsync(payload, {
-        secret: this.configService.get('ACCESS_TOKEN'),
+        secret: this.configService.get('JWT_ACCESS_TOKEN'),
         expiresIn: '3d',
       }),
 
       this.jwtService.signAsync(payload, {
-        secret: this.configService.get('REFRESH_TOKEN'),
+        secret: this.configService.get('JWT_REFRESH_TOKEN'),
         expiresIn: '7d',
       }),
     ]);

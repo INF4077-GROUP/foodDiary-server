@@ -7,17 +7,23 @@ export class UserEntity {
   private dateOfBirth: number;
   private description: string;
 
+  private createdAt: number;
+  private updatedAt: number;
+
   constructor(data: UserInterface) {
     this.init(data);
   }
 
   init(data: UserInterface) {
-    const { id, name, email, dateOfBirth, description } = data;
+    const { id, name, email, dateOfBirth, description, createdAt, updatedAt } =
+      data;
     this.id = id;
     this.name = name;
     this.email = email;
     this.dateOfBirth = dateOfBirth;
     this.description = description;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   get getId(): string {
@@ -38,5 +44,13 @@ export class UserEntity {
 
   get getDescription(): string {
     return this.getDescription;
+  }
+
+  get getCreatedAt(): number {
+    return this.createdAt;
+  }
+
+  get getUpfdatedAt(): number {
+    return this.updatedAt;
   }
 }

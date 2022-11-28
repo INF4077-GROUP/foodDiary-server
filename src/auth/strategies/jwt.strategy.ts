@@ -2,31 +2,27 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { UserRepository } from 'src/domain/nodes/user/user.service';
+import { AuthService } from '../auth.service';
+import { JWT } from '../constants';
+import { PayloadType } from '../types';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor(config: ConfigService, private userRepository: UserRepository) {
+export class JwtStrategy extends PassportStrategy(Strategy, JWT) {
+  constructor(
+    config: ConfigService,
+    private readonly authService: AuthService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: config.get('JWT_SECRET'),
+      secretOrKey: config.get('JWT_ACCESS_TOKEN'),
     });
   }
 
-  async validate(payload: { sub: string; name: string }) {
-    console.log('hello world');
+  async validate(payload: PayloadType) {
+    const user = await this.authService.jwtValidateUser(payload.sub);
 
-    const [data] = await this.userRepository.findOneById(payload.sub);
-
-    if (!data) throw new UnauthorizedException();
-
-    const user = data.user.properties;
-
-    console.log(user);
-
-    delete user.hash;
-    console.log(user);
+    if (!user) throw new UnauthorizedException('acces denied.');
 
     return user;
   }

@@ -72,6 +72,7 @@ export class UserRepository {
           SET user.email = '${email}'
           SET user.dateOfBirth = ${dateOfBirth}
           SET user.description = '${description}'
+          SET user.updatedAt = ${Date.now()}
       `,
       )
       .return(UserRepository.user)

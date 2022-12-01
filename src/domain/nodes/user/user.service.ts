@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Neo4jService } from 'neo4j-module';
 import { UpdateUserDto } from 'src/users/dto';
 import { USER_NODE } from 'src/users/users.constant';
+import * as argon2 from 'argon2';
 
 @Injectable()
 export class UserRepository {
@@ -93,9 +94,13 @@ export class UserRepository {
   async updateHashedRefreshToken(id: string, rtToken: string) {
     const query = this.neo4jService.initQuery();
 
+    let hashedRt = '';
+
+    if (rtToken) hashedRt = await argon2.hash(rtToken);
+
     return await query
       .matchNode(UserRepository.user, USER_NODE, { id })
-      .raw(`SET user.hashedRt = '${rtToken}'`)
+      .raw(`SET user.hashedRt = '${hashedRt}'`)
       .return(UserRepository.user)
       .run();
   }

@@ -18,6 +18,7 @@ export class UpdateUserDto {
 
   @IsNumber()
   @IsOptional()
+  @ApiProperty({ description: 'The date of birth of the user.' })
   readonly dateOfBirth?: number;
 
   @IsString()

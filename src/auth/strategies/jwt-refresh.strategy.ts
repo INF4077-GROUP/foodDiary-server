@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { UserRepository } from 'src/domain/nodes/user/user.service';
+import { AuthService } from '../auth.service';
 import { JWT_REFRESH } from '../constants';
 import { PayloadType } from '../types';
 
@@ -12,29 +12,27 @@ export class JwtRefreshStrategy extends PassportStrategy(
   Strategy,
   JWT_REFRESH,
 ) {
-  constructor(config: ConfigService, private userRepository: UserRepository) {
+  constructor(config: ConfigService, private authService: AuthService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: config.get('JWT_ACCESS_TOKEN'),
+      secretOrKey: config.get('JWT_REFRESH_TOKEN'),
       passReqToCallback: true,
     });
   }
 
   async validate(req: Request, payload: PayloadType) {
-    const result = await this.userRepository.findOneById(payload.sub);
+    const bearerRtToken = req.headers.authorization
+      .replace('Bearer', '')
+      .trim();
 
-    const user = result[0].user.properties;
+    const user = await this.authService.jwtRefreshValidateUser(
+      payload.sub,
+      bearerRtToken,
+    );
 
-    if (!user || !user.hashedRt) throw new UnauthorizedException();
+    if (!user) throw new UnauthorizedException('access denied.');
 
-    const bearerRt = req.headers.authorization.replace('Bearer', '').trim();
-
-    delete user.hash;
-    delete user.hashedRt;
-
-    const userWithBearerRt = { ...user, bearerRt };
-
-    return userWithBearerRt;
+    return { ...user, bearerRtToken };
   }
 }

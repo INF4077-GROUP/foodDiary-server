@@ -53,4 +53,16 @@ export class UserEntity {
   get getUpfdatedAt(): number {
     return this.updatedAt;
   }
+
+  get getData() {
+    return {
+      id: this.id,
+      name: this.name,
+      email: this.email,
+      dateOfBirth: this.dateOfBirth,
+      description: this.description,
+      createdAt: this.createdAt,
+      updateAt: this.updatedAt,
+    };
+  }
 }

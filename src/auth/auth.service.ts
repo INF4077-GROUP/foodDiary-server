@@ -20,7 +20,7 @@ export class AuthService {
 
   async register(authDto: AuthDto) {
     const [nameAlreadyExist] = await this.userRepository.findOneByName(
-      authDto.name,
+      authDto.name.toLocaleLowerCase().trim(),
     );
 
     if (nameAlreadyExist)
@@ -50,9 +50,10 @@ export class AuthService {
 
     const tokens = await this.generateTokens(user.id, user.name);
 
-    const hashedRt = await argon2.hash(tokens.refresh_token);
-
-    await this.userRepository.updateHashedRefreshToken(user.id, hashedRt);
+    await this.userRepository.updateHashedRefreshToken(
+      user.id,
+      tokens.refresh_token,
+    );
 
     return tokens;
   }
@@ -72,9 +73,10 @@ export class AuthService {
 
     const tokens = await this.generateTokens(user.id, user.name);
 
-    const hashedRt = await argon2.hash(tokens.refresh_token);
-
-    await this.userRepository.updateHashedRefreshToken(user.id, hashedRt);
+    await this.userRepository.updateHashedRefreshToken(
+      user.id,
+      tokens.refresh_token,
+    );
 
     return tokens;
   }
@@ -88,12 +90,48 @@ export class AuthService {
     return userData.user.properties;
   }
 
+  async refreshTokens(userId: string, bearerToken: string): Promise<Tokens> {
+    const [userData] = await this.userRepository.findOneById(userId);
+
+    const user = userData.user.properties;
+
+    const isHashedRtMached = await argon2.verify(user.hashedRt, bearerToken);
+
+    if (!isHashedRtMached) throw new ForbiddenException('acces denied.');
+
+    const tokens = await this.generateTokens(user.id, user.name);
+
+    await this.userRepository.updateHashedRefreshToken(
+      user.id,
+      tokens.refresh_token,
+    );
+
+    return tokens;
+  }
+
   async jwtValidateUser(userId: string) {
     const [userData] = await this.userRepository.findOneById(userId);
 
     if (!userData || !userData.user.properties.hashedRt) return null;
 
     const user = userData.user.properties;
+
+    delete user.hash;
+    delete user.hashedRt;
+
+    return user;
+  }
+
+  async jwtRefreshValidateUser(userId: string, bearerToken: string) {
+    const [userData] = await this.userRepository.findOneById(userId);
+
+    if (!userData || !userData.user.properties.hashedRt) return null;
+
+    const user = userData.user.properties;
+
+    const isRtTokenMatched = await argon2.verify(user.hashedRt, bearerToken);
+
+    if (!isRtTokenMatched) return null;
 
     delete user.hash;
     delete user.hashedRt;

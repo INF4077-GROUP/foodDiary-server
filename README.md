@@ -32,7 +32,7 @@ DATABASE_PASSWORD=YOUR_DBMS_PASSWORD
 
 ### step 5: Start the application
 
-Once the database is launched, you can start the application with the following command
+Once the database is launched, you can start the application with the following command.
 
 ```
 npm run start:dev

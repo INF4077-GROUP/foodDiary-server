@@ -1,6 +1,23 @@
-import { Controller, Delete, Get, Patch, Body } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Body,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import * as multer from 'multer';
 import { GetUser } from 'src/auth/decorators';
+import { FileExtensionValidation } from 'src/upload-file/pipes/file-extention-validation.pipe';
+import { FileSizeValidation } from 'src/upload-file/pipes/file-size-validation.pipe';
+import { IMAGE } from 'src/upload-file/upload-file.constants';
+import { UploadOperations } from 'src/upload-file/utils';
 import { UpdateUserDto } from './dto';
 import { UserEntity } from './entities';
 import { UserInterface } from './interfaces';
@@ -31,6 +48,23 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.update(id, updateUserDto);
+  }
+
+  @Patch('update/avatar')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: multer.diskStorage({
+        destination: 'uploads',
+        filename: UploadOperations.getFilename,
+      }),
+    }),
+  )
+  async updateAvatar(
+    @UploadedFile(FileExtensionValidation, new FileSizeValidation(IMAGE))
+    file: Express.Multer.File,
+    @GetUser('id') id: string,
+  ) {
+    return this.usersService.updateAvatar(id, file);
   }
 
   @Delete('delete')

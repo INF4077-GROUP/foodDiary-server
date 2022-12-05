@@ -16,6 +16,11 @@ export class UpdateUserDto {
   @IsOptional()
   readonly email?: string;
 
+  @IsString()
+  @IsOptional()
+  @ApiProperty({ description: 'Profile pic of the user.' })
+  readonly avatar?: string;
+
   @IsNumber()
   @IsOptional()
   @ApiProperty({ description: 'The date of birth of the user.' })

@@ -37,6 +37,7 @@ export class AuthService {
 
       name: data.name,
       email: '',
+      avatar: '',
       dateOfBirth: 0,
       description: '',
 

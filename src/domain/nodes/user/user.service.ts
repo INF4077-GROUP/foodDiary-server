@@ -82,6 +82,23 @@ export class UserRepository {
     return result;
   }
 
+  async updateAvatar(id: string, avatarUrl: string) {
+    const query = this.neo4jService.initQuery();
+
+    const result = await query
+      .matchNode(UserRepository.user, USER_NODE, { id })
+      .raw(
+        `
+        SET user.avatar = '${avatarUrl}'
+        SET user.updatedAt = ${Date.now()}
+      `,
+      )
+      .return(UserRepository.user)
+      .run();
+
+    return result;
+  }
+
   async delete(id: string) {
     const query = this.neo4jService.initQuery();
 

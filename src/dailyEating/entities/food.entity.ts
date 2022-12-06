@@ -15,6 +15,12 @@ export class FoodEntity {
     this.id = foodData.id;
     this.name = foodData.name;
   }
+  get datas() {
+    return {
+      id: this.id,
+      name: this.name,
+    };
+  }
 
   get getId() {
     return this.id;

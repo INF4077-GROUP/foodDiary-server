@@ -4,7 +4,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { WrapResponseInterceptor } from './common/interceptors';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
-import express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,19 +14,22 @@ async function bootstrap() {
 
   app.enableCors(corsOptions);
 
+  /**
+   * @TODO make file accessible via the browser
+   */
+  // app.use('/static', express.static('../uploads'));
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidUnknownValues: true,
       forbidNonWhitelisted: true,
       transform: true,
-      transformOptions: {
-        enableImplicitConversion: true,
-      },
+      // transformOptions: {
+      //   enableImplicitConversion: true,
+      // },
     }),
   );
-
-  // app.use('/static', express.static('../uploads'));
 
   app.useGlobalInterceptors(
     new WrapResponseInterceptor(),

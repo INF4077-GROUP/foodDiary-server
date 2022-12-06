@@ -1,0 +1,41 @@
+{
+    "workbench.editorAssociations": {
+        "*.txt": "default"
+    },
+    "workbench.colorCustomizations": {
+        "tab.activeBorderTop": "#ff6600",
+        // "editor.background": "#191e27",
+        "editorIndentGuide.activeBackground": "#ff6600",
+        "editorCursor.foreground": "#ff6600",
+        // "sideBar.background": "#191e27,"
+        "sideBar.border": "#e61a1a",
+        "statusBar.background": "#191e27",
+        "activityBar.background": "#191e27",
+        "editor.selectionBackground": "#ff660067",
+        "editor.selectionHighlightBackground": "#0b5dd757",
+        "editorLineNumber.activeForeground": "#ff6600",
+    },
+    "workbench.iconTheme": "vscode-great-icons",
+    "editor.fontFamily": "'Cascadia Code'",
+    "editor.fontLigatures": "'calt', 'ss01'",
+    "editor.defaultFormatter": "vscode.html-language-features",
+    "editor.fontSize": 16,
+    "editor.lineHeight": 22,
+    "editor.cursorWidth": 3.5,
+    "terminal.integrated.copyOnSelection": true,
+    "terminal.integrated.cursorBlinking": true,
+    "code-runner.runInTerminal": true,
+    "workbench.colorTheme": "Shades",
+    "editor.cursorBlinking": "expand",
+    "files.associations": {
+        "*.html": "html"
+    },
+
+    "editor.renderWhitespace": "all",
+    "sync.gist": "c8274b35c6c8b15a5be52462ab9182c0",
+    "window.zoomLevel": -0.5,
+    "editor.inlineSuggest.enabled": true,
+
+    
+
+}

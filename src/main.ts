@@ -4,9 +4,16 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { WrapResponseInterceptor } from './common/interceptors';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
+import express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const corsOptions = {
+    origin: '*',
+  };
+
+  app.enableCors(corsOptions);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -19,6 +26,8 @@ async function bootstrap() {
       },
     }),
   );
+
+  // app.use('/static', express.static('../uploads'));
 
   app.useGlobalInterceptors(
     new WrapResponseInterceptor(),

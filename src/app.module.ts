@@ -8,6 +8,7 @@ import { JwtGuard } from './auth/guards';
 import { UserModule } from './domain/nodes/user/user.module';
 import { UsersModule } from './users/users.module';
 import { UploadFileModule } from './upload-file/upload-file.module';
+import { DailyEatingModule } from './dailyEating/daily-eating.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -32,8 +33,9 @@ import { UploadFileModule } from './upload-file/upload-file.module';
 
     AuthModule,
     UserModule,
-    UsersModule,
     UploadFileModule,
+    UsersModule,
+    DailyEatingModule,
   ],
   controllers: [],
   providers: [

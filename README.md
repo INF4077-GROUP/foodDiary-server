@@ -23,10 +23,10 @@ create a DBMS with the name `foodDiary-dbms` and start it
 create a `.env` file in a root of the project with the the given credentials
 
 ```
-DATABASE_SCHEME=bolt
+DATABASE_SCHEME=YOUR_SCHEME
 DATABASE_HOST=localhost
-DATABASE_PORT=7687
-DATABASE_USERNAME=neo4j
+DATABASE_PORT=YOUR_PORT
+DATABASE_USERNAME=YOUR_USER_NAME
 DATABASE_PASSWORD=YOUR_DBMS_PASSWORD
 ```
 

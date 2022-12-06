@@ -6,6 +6,7 @@ export class UserEntity {
   private email: string;
   private dateOfBirth: number;
   private description: string;
+  private avatar: string;
 
   private createdAt: number;
   private updatedAt: number;
@@ -15,12 +16,21 @@ export class UserEntity {
   }
 
   init(data: UserInterface) {
-    const { id, name, email, dateOfBirth, description, createdAt, updatedAt } =
-      data;
+    const {
+      id,
+      name,
+      email,
+      dateOfBirth,
+      description,
+      avatar,
+      createdAt,
+      updatedAt,
+    } = data;
     this.id = id;
     this.name = name;
     this.email = email;
     this.dateOfBirth = dateOfBirth;
+    this.avatar = avatar;
     this.description = description;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;

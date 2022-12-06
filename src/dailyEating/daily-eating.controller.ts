@@ -10,7 +10,10 @@ export class DailyEatingController {
   constructor(private readonly dailyEatingService: DailyEatingService) {}
 
   @Post()
-  async create(@Body() createDailyEatingDto: CreateDailyEatingDto) {
-    return this.dailyEatingService.create(createDailyEatingDto);
+  async create(
+    @GetUser('id') userId: string,
+    @Body() createDailyEatingDto: CreateDailyEatingDto,
+  ) {
+    return this.dailyEatingService.create(userId, createDailyEatingDto);
   }
 }

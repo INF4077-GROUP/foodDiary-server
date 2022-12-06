@@ -9,6 +9,7 @@ import { UserModule } from './domain/nodes/user/user.module';
 import { UsersModule } from './users/users.module';
 import { UploadFileModule } from './upload-file/upload-file.module';
 import { DailyEatingModule } from './dailyEating/daily-eating.module';
+import { CommonRepoModule } from './domain/nodes/common/common.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -32,8 +33,8 @@ import { DailyEatingModule } from './dailyEating/daily-eating.module';
     }),
 
     AuthModule,
+    CommonRepoModule,
     UserModule,
-    UploadFileModule,
     UsersModule,
     DailyEatingModule,
   ],

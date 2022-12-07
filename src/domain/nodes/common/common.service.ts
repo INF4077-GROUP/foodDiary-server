@@ -45,12 +45,12 @@ export class CommonRepository {
     return result;
   }
 
-  async createRelation<T>(
+  async createRelation(
     firstNode: string,
     firstNodeValue: string,
     secondNode: string,
     secondNodeValue: string,
-    // properties: T,
+    // properties: any,
   ) {
     const query = this.neo4jService.initQuery();
 

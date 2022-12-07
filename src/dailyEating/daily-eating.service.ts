@@ -1,43 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { FOOD_NODE, USER_NODE } from 'src/common/common.constant';
+import { FOOD_NODE } from 'src/common/common.constant';
 import { CommonRepository } from 'src/domain/nodes/common/common.service';
+import { FoodRepository } from 'src/domain/nodes/food/food.service';
 import { CreateDailyEatingDto } from './dto';
 
 @Injectable()
 export class DailyEatingService {
-  constructor(private readonly commonRepository: CommonRepository) {}
+  constructor(
+    private readonly commonRepository: CommonRepository,
+    private readonly foodRepository: FoodRepository,
+  ) {}
 
   async create(userId: string, createDailyEatingDto: CreateDailyEatingDto) {
-    const food = createDailyEatingDto.foods[0];
-
-    const [foodExist] = await this.commonRepository.findOneByName(
-      FOOD_NODE,
-      food.name,
+    const result = await Promise.all(
+      createDailyEatingDto.foods.map(async (food) =>
+        this.preloadFoodAndRelations(userId, food.name, {
+          date: Date.now(),
+          eatingNb: food.eatingNb,
+        }),
+      ),
     );
 
-    if (foodExist) {
-      /**
-       * @TODO create relationship between user and food with 2 propertie(data, quantity)
-       */
+    return result;
+  }
 
-      const [result] = await this.commonRepository.createRelation(
-        USER_NODE,
-        userId,
-        FOOD_NODE,
-        food.name,
-      );
+  private async preloadFoodAndRelations(
+    userId: string,
+    foodName: string,
+    eatRelationProperties: { date: number; eatingNb: number },
+  ) {
+    await this.foodRepository.prayloadFood(foodName);
 
-      return result;
-    }
+    //create "eat" relation
+    const [result] = await this.foodRepository.createUserEatFood(
+      userId,
+      foodName,
+      {
+        date: eatRelationProperties.date,
+        eatingNb: eatRelationProperties.eatingNb,
+      },
+    );
 
-    const [foodData] = await this.commonRepository.create(FOOD_NODE, {
-      name: food.name,
-    });
-
-    /**
-     * @TODO create relationship between user and food with 2 propertie(data, quantity)
-     */
-
-    return foodData;
+    return result.relation.properties;
   }
 }

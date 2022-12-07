@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Neo4jService } from 'neo4j-module';
-import { FOOD_NODE, USER_NODE } from 'src/common/common.constant';
+import { FOOD_NODE, USER_NODE } from 'src/common/constants';
 import { CommonRepository } from '../common/common.service';
+import { EatType, FoodType } from './types';
 
 @Injectable()
 export class FoodRepository {
@@ -12,21 +13,33 @@ export class FoodRepository {
     private readonly commonRepository: CommonRepository,
   ) {}
 
+  async preloadFood(foodData: FoodType) {
+    const foodName = foodData.name.toLocaleLowerCase();
+
+    const [foodExist] = await this.commonRepository.findOneByName(
+      FOOD_NODE,
+      foodName,
+    );
+
+    if (!foodExist)
+      await this.commonRepository.create(FOOD_NODE, { name: foodName });
+  }
+
   async createUserEatFood(
     userId: string,
-    foodName: string,
-    properties: { date: number; eatingNb: number },
+    foodData: FoodType,
+    eatData: EatType,
   ) {
     const query = this.neo4jService.initQuery();
 
     const userLabel = USER_NODE.toLocaleLowerCase();
     const foodLabel = FOOD_NODE.toLocaleLowerCase();
 
-    const { date, eatingNb } = properties;
+    const { date, eatingNb } = eatData;
 
     const result = await query
       .matchNode(userLabel, USER_NODE, { id: userId })
-      .matchNode(foodLabel, FOOD_NODE, { name: foodName })
+      .matchNode(foodLabel, FOOD_NODE, { name: foodData.name })
       .raw(
         `
         CREATE (${userLabel}) -[relation:EAT{ date: ${date}, eatingNb: ${eatingNb} }]-> (${foodLabel})
@@ -36,17 +49,5 @@ export class FoodRepository {
       .run();
 
     return result;
-  }
-
-  async prayloadFood(foodName: string) {
-    const nameFood = foodName.toLocaleLowerCase();
-
-    const [foodExist] = await this.commonRepository.findOneByName(
-      FOOD_NODE,
-      nameFood,
-    );
-
-    if (!foodExist)
-      await this.commonRepository.create(FOOD_NODE, { name: nameFood });
   }
 }

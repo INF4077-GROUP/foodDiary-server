@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Neo4jService } from 'neo4j-module';
 import { UpdateUserDto } from 'src/users/dto';
 import * as argon2 from 'argon2';
-import { USER_NODE } from 'src/common/common.constant';
+import { USER_NODE } from 'src/common/constants';
 
 @Injectable()
 export class UserRepository {

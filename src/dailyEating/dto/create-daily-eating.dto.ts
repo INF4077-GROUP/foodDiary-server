@@ -5,14 +5,14 @@ export type OtherLiquid = {
   quantity: number;
 };
 
-export type FoodType = {
+type Food = {
   name: string;
   eatingNb: number;
 };
 
 export class CreateDailyEatingDto {
   @IsArray()
-  readonly foods: FoodType[];
+  readonly foods: Food[];
 
   @IsNumber()
   readonly waterQuantity: number;

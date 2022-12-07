@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { DailyEatingModule } from './dailyEating/daily-eating.module';
 import { CommonRepoModule } from './domain/nodes/common/common.module';
 import { FoodModule } from './domain/nodes/food/food.module';
+import { VegetableModule } from './domain/nodes/vegetable/vegetable.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -36,6 +37,7 @@ import { FoodModule } from './domain/nodes/food/food.module';
     CommonRepoModule,
     UserModule,
     FoodModule,
+    VegetableModule,
     UsersModule,
     DailyEatingModule,
   ],

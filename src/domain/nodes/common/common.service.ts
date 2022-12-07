@@ -44,30 +44,4 @@ export class CommonRepository {
 
     return result;
   }
-
-  async createRelation(
-    firstNode: string,
-    firstNodeValue: string,
-    secondNode: string,
-    secondNodeValue: string,
-    // properties: any,
-  ) {
-    const query = this.neo4jService.initQuery();
-
-    const firtLabel = firstNode.toLocaleLowerCase();
-    const secondLabel = secondNode.toLocaleLowerCase();
-
-    const result = await query
-      .matchNode(firtLabel, firstNode, {
-        id: firstNodeValue,
-      })
-      .matchNode(secondLabel, secondNode, { name: secondNodeValue })
-      .raw(
-        `CREATE (${firtLabel}) -[relation:EAT{ date: ${Date.now()}, eatingNb: ${2} }]-> (${secondLabel}) `,
-      )
-      .return('relation')
-      .run();
-
-    return result;
-  }
 }

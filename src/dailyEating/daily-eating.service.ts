@@ -1,44 +1,96 @@
 import { Injectable } from '@nestjs/common';
-import { FOOD_NODE } from 'src/common/common.constant';
-import { CommonRepository } from 'src/domain/nodes/common/common.service';
 import { FoodRepository } from 'src/domain/nodes/food/food.service';
+import { EatType, FoodType } from 'src/domain/nodes/food/types';
+import { ConsumeType, VegetableType } from 'src/domain/nodes/vegetable/types';
+import { FRUIT, LEGUME } from 'src/domain/nodes/vegetable/vegetable.constants';
+import { VegetableRepository } from 'src/domain/nodes/vegetable/vegetable.service';
 import { CreateDailyEatingDto } from './dto';
 
 @Injectable()
 export class DailyEatingService {
   constructor(
-    private readonly commonRepository: CommonRepository,
     private readonly foodRepository: FoodRepository,
+    private readonly vegetableRopository: VegetableRepository,
   ) {}
 
   async create(userId: string, createDailyEatingDto: CreateDailyEatingDto) {
-    const result = await Promise.all(
-      createDailyEatingDto.foods.map(async (food) =>
-        this.preloadFoodAndRelations(userId, food.name, {
-          date: Date.now(),
-          eatingNb: food.eatingNb,
-        }),
+    const { foods, fruits, legumes } = createDailyEatingDto;
+
+    await Promise.all(
+      foods.map(async (food) =>
+        this.preloadFoodAndRelations(
+          userId,
+          { name: food.name },
+          {
+            date: Date.now(),
+            eatingNb: food.eatingNb,
+          },
+        ),
       ),
     );
 
-    return result;
+    await Promise.all(
+      fruits.map(async (fruitName) =>
+        this.preloadVegetableAndRelations(
+          userId,
+          {
+            type: FRUIT,
+            name: fruitName,
+          },
+          {
+            date: Date.now(),
+          },
+        ),
+      ),
+    );
+
+    await Promise.all(
+      legumes.map(async (legumeName) =>
+        this.preloadVegetableAndRelations(
+          userId,
+          {
+            type: LEGUME,
+            name: legumeName,
+          },
+          {
+            date: Date.now(),
+          },
+        ),
+      ),
+    );
+
+    return {
+      data: true,
+    };
   }
 
   private async preloadFoodAndRelations(
     userId: string,
-    foodName: string,
-    eatRelationProperties: { date: number; eatingNb: number },
+    foodData: FoodType,
+    eatData: EatType,
   ) {
-    await this.foodRepository.prayloadFood(foodName);
+    await this.foodRepository.preloadFood(foodData);
 
-    //create "eat" relation
     const [result] = await this.foodRepository.createUserEatFood(
       userId,
-      foodName,
-      {
-        date: eatRelationProperties.date,
-        eatingNb: eatRelationProperties.eatingNb,
-      },
+      foodData,
+      eatData,
+    );
+
+    return result.relation.properties;
+  }
+
+  private async preloadVegetableAndRelations(
+    userId: string,
+    vegetableData: VegetableType,
+    consumeData: ConsumeType,
+  ) {
+    await this.vegetableRopository.preloadVegetable(vegetableData);
+
+    const [result] = await this.vegetableRopository.createUserConsumeVegetable(
+      userId,
+      vegetableData.name,
+      consumeData,
     );
 
     return result.relation.properties;

@@ -3,6 +3,8 @@ import { FoodRepository } from 'src/domain/nodes/food/food.service';
 import { EatType, FoodType } from 'src/domain/nodes/food/types';
 import { LiquidRepository } from 'src/domain/nodes/liquid/liquid.service';
 import { DrinkType, LiquidType } from 'src/domain/nodes/liquid/types';
+import { SickRepository } from 'src/domain/nodes/sick/sick.service';
+import { HaveType, SickType } from 'src/domain/nodes/sick/types';
 import { ConsumeType, VegetableType } from 'src/domain/nodes/vegetable/types';
 import { FRUIT, LEGUME } from 'src/domain/nodes/vegetable/vegetable.constants';
 import { VegetableRepository } from 'src/domain/nodes/vegetable/vegetable.service';
@@ -14,10 +16,11 @@ export class DailyEatingService {
     private readonly foodRepository: FoodRepository,
     private readonly vegetableRopository: VegetableRepository,
     private readonly liquidRepository: LiquidRepository,
+    private readonly sickRepository: SickRepository,
   ) {}
 
   async create(userId: string, createDailyEatingDto: CreateDailyEatingDto) {
-    const { foods, fruits, legumes, otherLiquid, waterQuantity } =
+    const { foods, fruits, legumes, otherLiquid, waterQuantity, health } =
       createDailyEatingDto;
 
     await Promise.all(
@@ -63,22 +66,34 @@ export class DailyEatingService {
       ),
     );
 
-    const liquids: OtherLiquid[] = [
-      { name: 'water', quantity: waterQuantity },
-      ...otherLiquid,
-    ];
+    // const liquids: OtherLiquid[] = [
+    //   { name: 'water', quantity: waterQuantity },
+    //   ...otherLiquid,
+    // ];
 
-    const result = await Promise.all(
-      liquids.map((liquid) =>
-        this.preloadLiquidAndRelations(
+    // const result = await Promise.all(
+    //   liquids.map((liquid) =>
+    //     this.preloadLiquidAndRelations(
+    //       userId,
+    //       { name: liquid.name },
+    //       { date: Date.now(), quantity: liquid.quantity },
+    //     ),
+    //   ),
+    // );
+
+    await Promise.all(
+      health.map((sickName) =>
+        this.preloadSickAndRelations(
           userId,
-          { name: liquid.name },
-          { date: Date.now(), quantity: liquid.quantity },
+          { name: sickName },
+          { date: Date.now() },
         ),
       ),
     );
 
-    return result;
+    return {
+      data: 'created',
+    };
   }
 
   private async preloadFoodAndRelations(
@@ -124,6 +139,22 @@ export class DailyEatingService {
       userId,
       liquidData.name,
       drinkData,
+    );
+
+    return result.relation.properties;
+  }
+
+  private async preloadSickAndRelations(
+    userId: string,
+    sickData: SickType,
+    haveData: HaveType,
+  ) {
+    await this.sickRepository.preloadSick(sickData);
+
+    const [result] = await this.sickRepository.createUserHaveSick(
+      userId,
+      sickData.name,
+      haveData,
     );
 
     return result.relation.properties;

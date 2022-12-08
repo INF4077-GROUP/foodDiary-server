@@ -1,20 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { FoodRepository } from 'src/domain/nodes/food/food.service';
 import { EatType, FoodType } from 'src/domain/nodes/food/types';
+import { LiquidRepository } from 'src/domain/nodes/liquid/liquid.service';
+import { DrinkType, LiquidType } from 'src/domain/nodes/liquid/types';
 import { ConsumeType, VegetableType } from 'src/domain/nodes/vegetable/types';
 import { FRUIT, LEGUME } from 'src/domain/nodes/vegetable/vegetable.constants';
 import { VegetableRepository } from 'src/domain/nodes/vegetable/vegetable.service';
-import { CreateDailyEatingDto } from './dto';
+import { CreateDailyEatingDto, OtherLiquid } from './dto';
 
 @Injectable()
 export class DailyEatingService {
   constructor(
     private readonly foodRepository: FoodRepository,
     private readonly vegetableRopository: VegetableRepository,
+    private readonly liquidRepository: LiquidRepository,
   ) {}
 
   async create(userId: string, createDailyEatingDto: CreateDailyEatingDto) {
-    const { foods, fruits, legumes } = createDailyEatingDto;
+    const { foods, fruits, legumes, otherLiquid, waterQuantity } =
+      createDailyEatingDto;
 
     await Promise.all(
       foods.map(async (food) =>
@@ -59,9 +63,22 @@ export class DailyEatingService {
       ),
     );
 
-    return {
-      data: true,
-    };
+    const liquids: OtherLiquid[] = [
+      { name: 'water', quantity: waterQuantity },
+      ...otherLiquid,
+    ];
+
+    const result = await Promise.all(
+      liquids.map((liquid) =>
+        this.preloadLiquidAndRelations(
+          userId,
+          { name: liquid.name },
+          { date: Date.now(), quantity: liquid.quantity },
+        ),
+      ),
+    );
+
+    return result;
   }
 
   private async preloadFoodAndRelations(
@@ -91,6 +108,22 @@ export class DailyEatingService {
       userId,
       vegetableData.name,
       consumeData,
+    );
+
+    return result.relation.properties;
+  }
+
+  private async preloadLiquidAndRelations(
+    userId: string,
+    liquidData: LiquidType,
+    drinkData: DrinkType,
+  ) {
+    await this.liquidRepository.preloadLiquid(liquidData);
+
+    const [result] = await this.liquidRepository.createUserDrinkLiquid(
+      userId,
+      liquidData.name,
+      drinkData,
     );
 
     return result.relation.properties;

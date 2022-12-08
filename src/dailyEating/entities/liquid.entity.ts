@@ -9,8 +9,8 @@ export class Liquid {
   private name: string;
   private quantity: number;
 
-  constructor(liquitData: LiquidData) {
-    this.init(liquitData);
+  constructor(liquidData: LiquidData) {
+    this.init(liquidData);
   }
 
   private init(liquidData: LiquidData) {

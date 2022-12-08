@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Neo4jService } from 'neo4j-module';
 import { FOOD_NODE, USER_NODE } from 'src/common/constants';
+import { Neo4jService } from 'neo4j-module';
 import { CommonRepository } from '../common/common.service';
 import { EatType, FoodType } from './types';
 
@@ -21,8 +21,7 @@ export class FoodRepository {
       foodName,
     );
 
-    if (!foodExist)
-      await this.commonRepository.create(FOOD_NODE, { name: foodName });
+    if (!foodExist) await this.commonRepository.create(FOOD_NODE, foodData);
   }
 
   async createUserEatFood(

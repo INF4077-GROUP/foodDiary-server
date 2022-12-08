@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { BowelRepository } from 'src/domain/nodes/bowel/bowel.service';
 import { FoodRepository } from 'src/domain/nodes/food/food.service';
 import { EatType, FoodType } from 'src/domain/nodes/food/types';
 import { LiquidRepository } from 'src/domain/nodes/liquid/liquid.service';
@@ -17,11 +18,19 @@ export class DailyEatingService {
     private readonly vegetableRopository: VegetableRepository,
     private readonly liquidRepository: LiquidRepository,
     private readonly sickRepository: SickRepository,
+    private readonly bowelRepository: BowelRepository,
   ) {}
 
   async create(userId: string, createDailyEatingDto: CreateDailyEatingDto) {
-    const { foods, fruits, legumes, otherLiquid, waterQuantity, health } =
-      createDailyEatingDto;
+    const {
+      foods,
+      fruits,
+      legumes,
+      otherLiquid,
+      waterQuantity,
+      health,
+      bowelNb,
+    } = createDailyEatingDto;
 
     await Promise.all(
       foods.map(async (food) =>
@@ -90,6 +99,11 @@ export class DailyEatingService {
         ),
       ),
     );
+
+    await this.bowelRepository.createUserWhenBowel(userId, {
+      date: Date.now(),
+      bowelNb,
+    });
 
     return {
       data: 'created',

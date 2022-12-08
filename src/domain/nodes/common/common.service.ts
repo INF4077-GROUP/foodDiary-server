@@ -6,6 +6,21 @@ export class CommonRepository {
   constructor(private readonly neo4jService: Neo4jService) {}
 
   /**
+   * Find all entities of nodes in the database
+   * @param node The node to get entities
+   * @returns
+   */
+  async findAll(node: string) {
+    const query = this.neo4jService.initQuery();
+
+    const label = node.toLocaleLowerCase();
+
+    const result = await query.matchNode(label, node).return(label).run();
+
+    return result;
+  }
+
+  /**
    * Find a node base on the node's id on database
    * @param node The node to look for
    * @param id The name of the node to look for

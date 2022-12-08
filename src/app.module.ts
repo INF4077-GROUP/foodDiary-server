@@ -13,6 +13,7 @@ import { FoodModule } from './domain/nodes/food/food.module';
 import { VegetableModule } from './domain/nodes/vegetable/vegetable.module';
 import { LiquidModule } from './domain/nodes/liquid/liquid.module';
 import { SickModule } from './domain/nodes/sick/sick.module';
+import { BowelModule } from './domain/nodes/bowel/bowel.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -42,6 +43,7 @@ import { SickModule } from './domain/nodes/sick/sick.module';
     LiquidModule,
     VegetableModule,
     SickModule,
+    BowelModule,
     UsersModule,
     DailyEatingModule,
   ],

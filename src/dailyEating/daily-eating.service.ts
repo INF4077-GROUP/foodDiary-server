@@ -23,13 +23,16 @@ export class DailyEatingService {
     const { foods, fruits, legumes, otherLiquid, waterQuantity, health } =
       createDailyEatingDto;
 
+    // New date
+    const date = Date.now();
+
     await Promise.all(
       foods.map(async (food) =>
         this.preloadFoodAndRelations(
           userId,
           { name: food.name },
           {
-            date: Date.now(),
+            date,
             eatingNb: food.eatingNb,
           },
         ),
@@ -45,7 +48,7 @@ export class DailyEatingService {
             name: fruitName,
           },
           {
-            date: Date.now(),
+            date
           },
         ),
       ),
@@ -60,33 +63,33 @@ export class DailyEatingService {
             name: legumeName,
           },
           {
-            date: Date.now(),
+            date
           },
         ),
       ),
     );
 
-    // const liquids: OtherLiquid[] = [
-    //   { name: 'water', quantity: waterQuantity },
-    //   ...otherLiquid,
-    // ];
+    const liquids: OtherLiquid[] = [
+      { name: 'water', quantity: waterQuantity },
+      ...otherLiquid,
+    ];
 
-    // const result = await Promise.all(
-    //   liquids.map((liquid) =>
-    //     this.preloadLiquidAndRelations(
-    //       userId,
-    //       { name: liquid.name },
-    //       { date: Date.now(), quantity: liquid.quantity },
-    //     ),
-    //   ),
-    // );
+    const result = await Promise.all(
+      liquids.map((liquid) =>
+        this.preloadLiquidAndRelations(
+          userId,
+          { name: liquid.name },
+          { date, quantity: liquid.quantity },
+        ),
+      ),
+    );
 
     await Promise.all(
       health.map((sickName) =>
         this.preloadSickAndRelations(
           userId,
           { name: sickName },
-          { date: Date.now() },
+          { date },
         ),
       ),
     );

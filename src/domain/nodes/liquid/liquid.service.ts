@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 // import { LIQUID_NODE, USER_NODE } from 'src/common/constants';
 import { DrinkType, LiquidType } from './types';
 
@@ -9,8 +9,8 @@ import { LIQUID_NODE, USER_NODE } from 'src/common/constants/nodes';
 Injectable();
 export class LiquidRepository {
   constructor(
-    private readonly neo4jService: Neo4jService,
-    private readonly commonRepository: CommonRepository,
+    @Inject(Neo4jService) private readonly neo4jService: Neo4jService,
+    @Inject(CommonRepository) private readonly commonRepository: CommonRepository,
   ) {
     console.log({ neo4jService });
     console.log({ commonRepository });

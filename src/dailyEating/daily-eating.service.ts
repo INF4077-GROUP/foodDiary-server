@@ -57,7 +57,7 @@ export class DailyEatingService {
             name: fruitName,
           },
           {
-            date
+            date,
           },
         ),
       ),
@@ -72,7 +72,7 @@ export class DailyEatingService {
             name: legumeName,
           },
           {
-            date
+            date,
           },
         ),
       ),
@@ -83,7 +83,7 @@ export class DailyEatingService {
       ...otherLiquid,
     ];
 
-    const result = await Promise.all(
+    await Promise.all(
       liquids.map((liquid) =>
         this.preloadLiquidAndRelations(
           userId,
@@ -95,11 +95,7 @@ export class DailyEatingService {
 
     await Promise.all(
       health.map((sickName) =>
-        this.preloadSickAndRelations(
-          userId,
-          { name: sickName },
-          { date },
-        ),
+        this.preloadSickAndRelations(userId, { name: sickName }, { date }),
       ),
     );
 

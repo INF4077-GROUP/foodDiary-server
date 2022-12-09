@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, IsOptional } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsPositive } from 'class-validator';
 
 export type OtherLiquid = {
   name: string;
@@ -15,6 +15,7 @@ export class CreateDailyEatingDto {
   readonly foods: Food[];
 
   @IsNumber()
+  @IsPositive()
   readonly waterQuantity: number;
 
   @IsArray()
@@ -30,6 +31,7 @@ export class CreateDailyEatingDto {
   readonly legumes?: string[];
 
   @IsNumber()
+  @IsPositive()
   readonly bowelNb: number;
 
   @IsArray()

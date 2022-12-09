@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { Neo4jService } from 'neo4j-module';
+import { USER_NODE } from 'src/common/constants';
+import { PaginationDto } from 'src/common/dto';
 import { BowelRepository } from 'src/domain/nodes/bowel/bowel.service';
 import { FoodRepository } from 'src/domain/nodes/food/food.service';
 import { EatType, FoodType } from 'src/domain/nodes/food/types';
@@ -9,17 +12,42 @@ import { HaveType, SickType } from 'src/domain/nodes/sick/types';
 import { ConsumeType, VegetableType } from 'src/domain/nodes/vegetable/types';
 import { FRUIT, LEGUME } from 'src/domain/nodes/vegetable/vegetable.constants';
 import { VegetableRepository } from 'src/domain/nodes/vegetable/vegetable.service';
-import { CreateDailyEatingDto, OtherLiquid } from './dto';
+import { CreateDailyEatingDto, OtherLiquid, UpdateDailyEatingDto } from './dto';
 
 @Injectable()
 export class DailyEatingService {
   constructor(
+    private readonly neo4jService: Neo4jService,
     private readonly foodRepository: FoodRepository,
     private readonly vegetableRopository: VegetableRepository,
     private readonly liquidRepository: LiquidRepository,
     private readonly sickRepository: SickRepository,
     private readonly bowelRepository: BowelRepository,
   ) {}
+
+  async getAll(userId: string, pagination: PaginationDto) {
+    const query = this.neo4jService.initQuery();
+
+    const userLabel = USER_NODE.toLocaleLowerCase();
+
+    const result = await query
+      .matchNode(userLabel, USER_NODE, { id: userId })
+      .run();
+  }
+
+  async getOne(userId: string, day: number) {
+    return {
+      message: 'get one dialy habit',
+    };
+  }
+
+  async update(
+    userId: string,
+    day: number,
+    updateDailyEatingDto: UpdateDailyEatingDto,
+  ) {
+    return updateDailyEatingDto;
+  }
 
   async create(userId: string, createDailyEatingDto: CreateDailyEatingDto) {
     const {

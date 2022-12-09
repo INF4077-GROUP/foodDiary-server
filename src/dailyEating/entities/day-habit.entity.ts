@@ -4,6 +4,7 @@ import { SickData } from './sick.entity';
 import { VegetableData } from './vegetable.entity';
 
 export type DayHabitData = {
+  day: number;
   foods: FoodData[];
   vegetables: VegetableData[];
   liquids: LiquidData[];
@@ -12,6 +13,7 @@ export type DayHabitData = {
 };
 
 export class DayHabit {
+  private day: number;
   private foods: FoodData[];
   private vegetables: VegetableData[];
   private liquids: LiquidData[];
@@ -23,6 +25,7 @@ export class DayHabit {
   }
 
   private init(dayHabitDatas: DayHabitData) {
+    this.day = dayHabitDatas.day;
     this.foods = dayHabitDatas.foods;
     this.vegetables = dayHabitDatas.vegetables;
     this.liquids = dayHabitDatas.liquids;
@@ -32,12 +35,17 @@ export class DayHabit {
 
   get getDatas(): DayHabitData {
     return {
+      day: this.day,
       foods: this.foods,
       vegetables: this.vegetables,
       liquids: this.liquids,
       sicks: this.sicks,
       toiletNb: this.toiletNb,
     };
+  }
+
+  get getDay() {
+    return this.day;
   }
 
   get getFoods(): FoodData[] {

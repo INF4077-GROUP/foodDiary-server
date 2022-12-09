@@ -32,7 +32,6 @@ export class DailyEatingService {
       bowelNb,
     } = createDailyEatingDto;
 
-    // New date
     const date = Date.now();
 
     await Promise.all(

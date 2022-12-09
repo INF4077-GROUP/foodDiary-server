@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-// import { LIQUID_NODE, USER_NODE } from 'src/common/constants';
 import { DrinkType, LiquidType } from './types';
 
 import { Neo4jService } from 'neo4j-module';
@@ -10,11 +9,9 @@ Injectable();
 export class LiquidRepository {
   constructor(
     @Inject(Neo4jService) private readonly neo4jService: Neo4jService,
-    @Inject(CommonRepository) private readonly commonRepository: CommonRepository,
-  ) {
-    console.log({ neo4jService });
-    console.log({ commonRepository });
-  }
+    @Inject(CommonRepository)
+    private readonly commonRepository: CommonRepository,
+  ) {}
 
   async preloadLiquid(liquidData: LiquidType) {
     const liquidName = liquidData.name.toLocaleLowerCase();

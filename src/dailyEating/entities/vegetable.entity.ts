@@ -1,13 +1,11 @@
 export type VegetableTypes = 'FRUIT' | 'LEGUME';
 
 export type VegetableData = {
-  id: string;
   type: VegetableTypes;
   name: string;
 };
 
 export class Vegetable {
-  private id: string;
   private name: string;
   private type: VegetableTypes;
 
@@ -16,13 +14,15 @@ export class Vegetable {
   }
 
   private init(vegetableData: VegetableData) {
-    this.id = vegetableData.id;
     this.name = vegetableData.name;
     this.type = vegetableData.type;
   }
 
-  get getId() {
-    return this.id;
+  get getDatas(): VegetableData {
+    return {
+      name: this.name,
+      type: this.type,
+    };
   }
 
   get getName() {

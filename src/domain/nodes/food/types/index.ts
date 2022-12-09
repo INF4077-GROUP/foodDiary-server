@@ -3,6 +3,6 @@ export type FoodType = {
 };
 
 export type EatType = {
-  date: number;
+  date: string;
   eatingNb: number;
 };

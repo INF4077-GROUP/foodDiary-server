@@ -6,5 +6,5 @@ export type VegetableType = {
 };
 
 export type ConsumeType = {
-  date: number;
+  date: string;
 };

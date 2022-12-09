@@ -37,7 +37,7 @@ export class BowelRepository {
       .matchNode(bowelLabel, BOWEL_NODE, { name: BowelRepository.bowelName })
       .raw(
         `
-          CREATE (${userLabel})-[relation:WHEN{date: ${whenData.date}, bowelNb: ${whenData.bowelNb}}]->(${bowelLabel})
+          CREATE (${userLabel})-[relation:WHEN{date: '${whenData.date}', bowelNb: ${whenData.bowelNb}}]->(${bowelLabel})
         `,
       )
       .run();

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Neo4jService } from 'neo4j-module';
-import { USER_NODE } from 'src/common/constants';
+import { LIQUID_NODE, USER_NODE, VEGETABLE_NODE } from 'src/common/constants';
 import { PaginationDto } from 'src/common/dto';
 import { BowelRepository } from 'src/domain/nodes/bowel/bowel.service';
 import { FoodRepository } from 'src/domain/nodes/food/food.service';
@@ -28,17 +28,15 @@ export class DailyEatingService {
   async getAll(userId: string, pagination: PaginationDto) {
     const query = this.neo4jService.initQuery();
 
-    const userLabel = USER_NODE.toLocaleLowerCase();
+    const liquidLabel = LIQUID_NODE.toLocaleLowerCase();
 
     const result = await query
-      .matchNode(userLabel, USER_NODE, { id: userId })
+      .matchNode(liquidLabel, LIQUID_NODE)
+      .return(liquidLabel)
+      .limit(pagination.limit)
       .run();
-  }
 
-  async getOne(userId: string, day: number) {
-    return {
-      message: 'get one dialy habit',
-    };
+    return result;
   }
 
   async update(
@@ -60,7 +58,7 @@ export class DailyEatingService {
       bowelNb,
     } = createDailyEatingDto;
 
-    const date = Date.now();
+    const date: string = new Date().toDateString();
 
     await Promise.all(
       foods.map(async (food) =>

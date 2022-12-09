@@ -3,5 +3,5 @@ export type SickType = {
 };
 
 export type HaveType = {
-  date: number;
+  date: string;
 };

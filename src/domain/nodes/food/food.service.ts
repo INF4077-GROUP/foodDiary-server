@@ -41,7 +41,7 @@ export class FoodRepository {
       .matchNode(foodLabel, FOOD_NODE, { name: foodData.name })
       .raw(
         `
-        CREATE (${userLabel}) -[relation:EAT{ date: ${date}, eatingNb: ${eatingNb} }]-> (${foodLabel})
+        CREATE (${userLabel}) -[relation:EAT{ date: "${date}", eatingNb: ${eatingNb} }]-> (${foodLabel})
       `,
       )
       .return('relation')

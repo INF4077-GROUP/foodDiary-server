@@ -39,7 +39,7 @@ export class LiquidRepository {
       .matchNode(userLabel, USER_NODE, { id: userId })
       .matchNode(liquidLabel, LIQUID_NODE, { name: liquidName })
       .raw(
-        `CREATE (${userLabel})-[relation:DRINK{date: ${drinkData.date}, quantity: ${drinkData.quantity}}]->(${liquidLabel})`,
+        `CREATE (${userLabel})-[relation:DRINK{date: '${drinkData.date}', quantity: ${drinkData.quantity}}]->(${liquidLabel})`,
       )
       .return('relation')
       .run();

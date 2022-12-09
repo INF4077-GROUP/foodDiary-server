@@ -3,6 +3,6 @@ export type LiquidType = {
 };
 
 export type DrinkType = {
-  date: number;
+  date: string;
   quantity: number;
 };

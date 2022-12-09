@@ -36,7 +36,7 @@ export class SickRepository {
       .matchNode(userLabel, USER_NODE, { id: userId })
       .matchNode(sickLabel, SICK_NODE, { name: sickName })
       .raw(
-        `CREATE (${userLabel})-[relation:HAVE{date: ${haveData.date}}]-> (${sickLabel})`,
+        `CREATE (${userLabel})-[relation:HAVE{date: '${haveData.date}'}]-> (${sickLabel})`,
       )
       .return('relation')
       .run();

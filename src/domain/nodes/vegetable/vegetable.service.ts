@@ -38,7 +38,7 @@ export class VegetableRepository {
       .matchNode(vegetableLabel, VEGETABLE_NODE, { name: vegetableName })
       .raw(
         `
-        CREATE (${userLabel})-[relation:CONSUME{date: ${properties.date}}]->(${vegetableLabel})
+        CREATE (${userLabel})-[relation:CONSUME{date: '${properties.date}'}]->(${vegetableLabel})
       `,
       )
       .return('relation')

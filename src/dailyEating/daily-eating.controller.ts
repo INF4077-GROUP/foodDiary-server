@@ -36,14 +36,6 @@ export class DailyEatingController {
     return this.dailyEatingService.getAll(userId, paginationDto);
   }
 
-  @Get(':day')
-  async getOne(
-    @GetUser('id') userId: string,
-    @Param('day', ParseIntPipe) day: number,
-  ) {
-    return this.dailyEatingService.getOne(userId, day);
-  }
-
   @Patch(':day')
   async update(
     userId: string,

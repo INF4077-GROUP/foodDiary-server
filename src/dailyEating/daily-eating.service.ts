@@ -36,7 +36,7 @@ export class DailyEatingService {
       .limit(pagination.limit)
       .run();
 
-    return result;
+    return result.map((elt) => elt['liquid'].properties);
   }
 
   async update(

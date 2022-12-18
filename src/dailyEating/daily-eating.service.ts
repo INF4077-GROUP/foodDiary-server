@@ -8,6 +8,7 @@ import {
   FOOD_NODE,
   EAT,
   DRINK,
+  CONSUME,
 } from 'src/common/constants';
 import { PaginationDto } from 'src/common/dto';
 import { BowelRepository } from 'src/domain/nodes/bowel/bowel.service';
@@ -22,6 +23,7 @@ import { FRUIT, LEGUME } from 'src/domain/nodes/vegetable/vegetable.constants';
 import { VegetableRepository } from 'src/domain/nodes/vegetable/vegetable.service';
 import { CreateDailyEatingDto, OtherLiquid, UpdateDailyEatingDto } from './dto';
 import { DayHabit, FoodEntity } from './entities';
+import { Vegetable } from './entities/vegetable.entity';
 
 @Injectable()
 export class DailyEatingService {
@@ -53,7 +55,7 @@ export class DailyEatingService {
       .matchNode(userLabel, USER_NODE, { id: userId })
       .raw(
         `
-        MATCH (${userLabel}:${USER_NODE})-[${eatRelation}:${EAT}]->(${foodLabel}:${FOOD_NODE})
+        MATCH (${userLabel})-[${eatRelation}:${EAT}]->(${foodLabel})
       `,
       )
       .return([foodLabel, eatRelation])
@@ -130,6 +132,35 @@ export class DailyEatingService {
       }
     }
 
+
+    // Step 3: Getting Vegetables
+
+    // Get Data from database
+    const vegetableResponse = await this.getAllVegetables(userId);
+
+    console.log(vegetableResponse)
+
+    // structure the response into the DayHabit entity
+    for (let element of vegetableResponse) {
+      // Extract date and foods list
+      const [date, vegetablesData] = element;
+      const vegetables: Vegetable[] = [];
+
+      // For each food create a food object
+      for (let vegetable of vegetablesData) {
+        const payload = { name: vegetable.name, type: vegetable.type };
+        vegetables.push(new Vegetable(payload));
+      }
+
+      // Get index of the day habit base on the date
+      const index = daysHabit.findIndex((day) => day.getDay === Number(date));
+
+      if (index !== -1) {
+        // Add liquids into the daysHabit
+        daysHabit[index].addVegetable(vegetables);
+      }
+    }
+
     return daysHabit;
   }
 
@@ -146,7 +177,7 @@ export class DailyEatingService {
       .matchNode(userLabel, USER_NODE, { id: userId })
       .raw(
         `
-        MATCH (${userLabel}:${USER_NODE})-[${drinkRelation}:${DRINK}]->(${liquidLabel}:${LIQUID_NODE})
+        MATCH (${userLabel})-[${drinkRelation}:${DRINK}]->(${liquidLabel})
       `,
       )
       .return([liquidLabel, drinkRelation])
@@ -168,6 +199,52 @@ export class DailyEatingService {
         };
 
         const date = new Date(drinkRelationData.date).getTime();
+
+        if (response[date]) {
+          response[date] = [...response[date], data];
+        } else {
+          response[date] = [data];
+        }
+      }
+    }
+
+    return Object.entries<any>(response);
+  }
+
+  async getAllVegetables(userId: string) {
+    const query = this.neo4jService.initQuery();
+
+    const vegetableLabel = VEGETABLE_NODE.toLocaleLowerCase();
+    const userLabel = USER_NODE.toLocaleLowerCase();
+    const consumeRelation = CONSUME.toLocaleLowerCase();
+
+    // Preparing the request
+    const results = await query
+      .matchNode(vegetableLabel, VEGETABLE_NODE)
+      .matchNode(userLabel, USER_NODE, { id: userId })
+      .raw(
+        `
+        MATCH (${userLabel})-[${consumeRelation}:${CONSUME}]->(${vegetableLabel})
+      `,
+      )
+      .return([vegetableLabel, consumeRelation])
+      .run();
+
+    // Extracting data from results
+
+    const response = {};
+
+    if (results.length > 0) {
+      for (let result of results) {
+        // Extract result data
+        const consumeRelationData = result[consumeRelation].properties;
+        const vegetableData = result[vegetableLabel].properties;
+
+        const data = {
+          ...vegetableData
+        };
+
+        const date = new Date(consumeRelationData.date).getTime();
 
         if (response[date]) {
           response[date] = [...response[date], data];

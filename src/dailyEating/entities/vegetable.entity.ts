@@ -9,8 +9,8 @@ export class Vegetable {
   private name: string;
   private type: VegetableTypes;
 
-  constructor(vegetebleData: VegetableData) {
-    this.init(vegetebleData);
+  constructor(vegetableData: VegetableData) {
+    this.init(vegetableData);
   }
 
   private init(vegetableData: VegetableData) {

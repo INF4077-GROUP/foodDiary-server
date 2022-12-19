@@ -1,23 +1,23 @@
-import { FoodData } from './food.entity';
-import { LiquidData } from './liquid.entity';
-import { SickData } from './sick.entity';
-import { VegetableData } from './vegetable.entity';
+import { FoodEntity } from './food.entity';
+import { Liquid } from './liquid.entity';
+import { Sick } from './sick.entity';
+import { Vegetable } from './vegetable.entity';
 
 export type DayHabitData = {
   day: number;
-  foods: FoodData[];
-  vegetables: VegetableData[];
-  liquids: LiquidData[];
-  sicks: SickData[];
-  toiletNb: number;
+  foods: FoodEntity[];
+  vegetables?: Vegetable[];
+  liquids?: Liquid[];
+  sicks?: Sick[];
+  toiletNb?: number;
 };
 
 export class DayHabit {
   private day: number;
-  private foods: FoodData[];
-  private vegetables: VegetableData[];
-  private liquids: LiquidData[];
-  private sicks: SickData[];
+  private foods: FoodEntity[];
+  private vegetables: Vegetable[];
+  private liquids: Liquid[];
+  private sicks: Sick[];
   private toiletNb: number;
 
   constructor(dayHabitDatas: DayHabitData) {
@@ -27,11 +27,13 @@ export class DayHabit {
   private init(dayHabitDatas: DayHabitData) {
     this.day = dayHabitDatas.day;
     this.foods = dayHabitDatas.foods;
-    this.vegetables = dayHabitDatas.vegetables;
-    this.liquids = dayHabitDatas.liquids;
-    this.sicks = dayHabitDatas.sicks;
-    this.toiletNb = dayHabitDatas.toiletNb;
+    this.vegetables = dayHabitDatas.vegetables || [];
+    this.liquids = dayHabitDatas.liquids || [];
+    this.sicks = dayHabitDatas.sicks || [];
+    this.toiletNb = dayHabitDatas.toiletNb || 0;
   }
+
+  // Getters
 
   get getDatas(): DayHabitData {
     return {
@@ -48,23 +50,44 @@ export class DayHabit {
     return this.day;
   }
 
-  get getFoods(): FoodData[] {
+  get getFoods(): FoodEntity[] {
     return this.foods;
   }
 
-  get getVegetables(): VegetableData[] {
+  get getVegetables(): Vegetable[] {
     return this.vegetables;
   }
 
-  get getLiquits(): LiquidData[] {
+  get getLiquits(): Liquid[] {
     return this.liquids;
   }
 
-  get getSicks(): SickData[] {
+  get getSicks(): Sick[] {
     return this.sicks;
   }
 
   get getToiletNb(): number {
     return this.toiletNb;
+  }
+
+  // Methods
+  addFood(food: FoodEntity) {
+    this.foods.push(food);
+  }
+
+  addVegetable(vegetables: Vegetable[]) {
+    this.vegetables = vegetables;
+  }
+
+  addLiquid(liquids: Liquid[]) {
+    this.liquids = liquids;
+  }
+
+  addSick(sicks: Sick[]) {
+    this.sicks = sicks;
+  }
+
+  setToiletNb(nb: number) {
+    this.toiletNb = nb;
   }
 }

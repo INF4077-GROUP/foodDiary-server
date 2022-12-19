@@ -47,7 +47,6 @@ import { BowelModule } from './domain/nodes/bowel/bowel.module';
     UsersModule,
     DailyEatingModule,
   ],
-  controllers: [],
   providers: [
     {
       provide: APP_GUARD,

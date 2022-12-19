@@ -25,9 +25,6 @@ async function bootstrap() {
       forbidUnknownValues: true,
       forbidNonWhitelisted: true,
       transform: true,
-      transformOptions: {
-        enableImplicitConversion: true,
-      },
     }),
   );
 

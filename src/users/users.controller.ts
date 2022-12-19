@@ -6,14 +6,11 @@ import {
   Body,
   UseInterceptors,
   UploadedFile,
-  ParseFilePipe,
-  MaxFileSizeValidator,
-  FileTypeValidator,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import * as multer from 'multer';
-import { GetUser, Public } from 'src/auth/decorators';
+import { GetUser } from 'src/auth/decorators';
 import { FileExtensionValidation } from 'src/upload-file/pipes/file-extention-validation.pipe';
 import { FileSizeValidation } from 'src/upload-file/pipes/file-size-validation.pipe';
 import { IMAGE } from 'src/upload-file/upload-file.constants';

@@ -22,7 +22,7 @@ import { ConsumeType, VegetableType } from 'src/domain/nodes/vegetable/types';
 import { FRUIT, LEGUME } from 'src/domain/nodes/vegetable/vegetable.constants';
 import { VegetableRepository } from 'src/domain/nodes/vegetable/vegetable.service';
 import { CreateDailyEatingDto, OtherLiquid, UpdateDailyEatingDto } from './dto';
-import { DayHabit, FoodEntity } from './entities';
+import { DayHabit, FoodEntity, Sick } from './entities';
 import { Vegetable } from './entities/vegetable.entity';
 
 @Injectable()
@@ -51,8 +51,8 @@ export class DailyEatingService {
 
     // Get all food
     const results = await query
-      .matchNode(foodLabel, FOOD_NODE)
       .matchNode(userLabel, USER_NODE, { id: userId })
+      .matchNode(foodLabel, FOOD_NODE)
       .raw(
         `
         MATCH (${userLabel})-[${eatRelation}:${EAT}]->(${foodLabel})
@@ -137,8 +137,6 @@ export class DailyEatingService {
     // Get Data from database
     const vegetableResponse = await this.getAllVegetables(userId);
 
-    console.log(vegetableResponse);
-
     // structure the response into the DayHabit entity
     for (const element of vegetableResponse) {
       // Extract date and foods list
@@ -160,8 +158,28 @@ export class DailyEatingService {
       }
     }
 
+    // Step4 getting all sicks
+    const sickResponse = await this.sickRepository.getAllSicks(userId);
+
+    for (const element of sickResponse) {
+      const [date, sickData] = element;
+      // const sicks: Sick[] = sickData.map((sick) => new Sick(sick));
+
+      const indexOfTheDate = daysHabit.findIndex(
+        (day) => day.getDay === Number(date),
+      );
+
+      if (indexOfTheDate !== -1) daysHabit[indexOfTheDate].addSick(sickData);
+    }
+
     return daysHabit;
   }
+
+  // async getAll(userId: string, pagination: PaginationDto) {
+  //   const response = await this.sickRepository.getAllSicks(userId);
+
+  //   return response;
+  // }
 
   async getAllLiquid(userId: string) {
     const query = this.neo4jService.initQuery();

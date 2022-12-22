@@ -163,7 +163,6 @@ export class DailyEatingService {
 
     for (const element of sickResponse) {
       const [date, sickData] = element;
-      // const sicks: Sick[] = sickData.map((sick) => new Sick(sick));
 
       const indexOfTheDate = daysHabit.findIndex(
         (day) => day.getDay === Number(date),
@@ -174,12 +173,6 @@ export class DailyEatingService {
 
     return daysHabit;
   }
-
-  // async getAll(userId: string, pagination: PaginationDto) {
-  //   const response = await this.sickRepository.getAllSicks(userId);
-
-  //   return response;
-  // }
 
   async getAllLiquid(userId: string) {
     const query = this.neo4jService.initQuery();

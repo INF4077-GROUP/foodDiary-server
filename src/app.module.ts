@@ -14,6 +14,7 @@ import { VegetableModule } from './domain/nodes/vegetable/vegetable.module';
 import { LiquidModule } from './domain/nodes/liquid/liquid.module';
 import { SickModule } from './domain/nodes/sick/sick.module';
 import { BowelModule } from './domain/nodes/bowel/bowel.module';
+import { MulterModule } from '@nestjs/platform-express';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -35,6 +36,8 @@ import { BowelModule } from './domain/nodes/bowel/bowel.module';
       username: process.env.DATABASE_USERNAME,
       password: process.env.DATABASE_PASSWORD,
     }),
+
+    MulterModule.register({}),
 
     AuthModule,
     CommonRepoModule,

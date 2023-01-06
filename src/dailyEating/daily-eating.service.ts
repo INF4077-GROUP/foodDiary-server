@@ -277,6 +277,7 @@ export class DailyEatingService {
 
   async create(userId: string, createDailyEatingDto: CreateDailyEatingDto) {
     const {
+      date,
       foods,
       fruits,
       legumes,
@@ -284,15 +285,14 @@ export class DailyEatingService {
       waterQuantity,
       health,
       bowelNb,
+      foodImage,
     } = createDailyEatingDto;
-
-    const date: string = new Date().toDateString();
 
     await Promise.all(
       foods.map(async (food) =>
         this.preloadFoodAndRelations(
           userId,
-          { name: food.name, image: createDailyEatingDto.foodImage },
+          { name: food.name, image: foodImage },
           {
             date,
             eatingNb: food.eatingNb,

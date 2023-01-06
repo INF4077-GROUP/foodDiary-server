@@ -18,6 +18,10 @@ type Food = {
 };
 
 export class CreateDailyEatingDto {
+  @IsString()
+  @IsNotEmpty()
+  readonly date: string;
+
   @IsArray()
   readonly foods: Food[];
 

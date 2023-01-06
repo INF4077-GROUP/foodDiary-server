@@ -27,6 +27,14 @@ export class DailyEatingController {
   constructor(private readonly dailyEatingService: DailyEatingService) {}
 
   @Post()
+  async create(
+    @GetUser('id') userId: string,
+    @Body() createDailyEatingDto: CreateDailyEatingDto,
+  ) {
+    return this.dailyEatingService.create(userId, createDailyEatingDto);
+  }
+
+  @Post('upload-food-image')
   @UseInterceptors(
     FileInterceptor('foodImage', {
       storage: diskStorage({
@@ -35,19 +43,15 @@ export class DailyEatingController {
       }),
     }),
   )
-  async create(
-    @GetUser('id') userId: string,
+  uploadFoodImage(
     @UploadedFile(
       new ParseFilePipe({
         fileIsRequired: true,
       }),
     )
     foodImage: Express.Multer.File,
-    @Body() createDailyEatingDto: CreateDailyEatingDto,
   ) {
-    console.log({ foodImage });
-
-    return this.dailyEatingService.create(userId, createDailyEatingDto);
+    return { image: foodImage.filename };
   }
 
   @Get()

@@ -292,7 +292,7 @@ export class DailyEatingService {
       foods.map(async (food) =>
         this.preloadFoodAndRelations(
           userId,
-          { name: food.name },
+          { name: food.name, image: createDailyEatingDto.foodImage },
           {
             date,
             eatingNb: food.eatingNb,

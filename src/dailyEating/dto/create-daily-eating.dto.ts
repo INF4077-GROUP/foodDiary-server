@@ -1,4 +1,11 @@
-import { IsArray, IsNumber, IsOptional, IsPositive } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+} from 'class-validator';
 
 export type OtherLiquid = {
   name: string;
@@ -13,6 +20,10 @@ type Food = {
 export class CreateDailyEatingDto {
   @IsArray()
   readonly foods: Food[];
+
+  @IsString()
+  @IsNotEmpty()
+  readonly foodImage: string;
 
   @IsNumber()
   @IsPositive()

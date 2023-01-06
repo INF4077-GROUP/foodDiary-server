@@ -22,7 +22,7 @@ import { ConsumeType, VegetableType } from 'src/domain/nodes/vegetable/types';
 import { FRUIT, LEGUME } from 'src/domain/nodes/vegetable/vegetable.constants';
 import { VegetableRepository } from 'src/domain/nodes/vegetable/vegetable.service';
 import { CreateDailyEatingDto, OtherLiquid, UpdateDailyEatingDto } from './dto';
-import { DayHabit, FoodEntity, Sick } from './entities';
+import { DayHabit, FoodEntity } from './entities';
 import { Vegetable } from './entities/vegetable.entity';
 
 @Injectable()
@@ -85,6 +85,8 @@ export class DailyEatingService {
       }
     }
 
+    console.log(Object.entries<any>(response));
+
     // structure the response into the DayHabit entity
     for (const element of Object.entries<any>(response)) {
       // Extract date and foods list
@@ -93,7 +95,11 @@ export class DailyEatingService {
 
       // For each food create a food object
       for (const food of foodsData) {
-        const payload = { name: food.name, eatingNb: food.number };
+        const payload = {
+          name: food.name,
+          eatingNb: food.number,
+          image: food.image,
+        };
         foods.push(new FoodEntity(payload));
       }
 

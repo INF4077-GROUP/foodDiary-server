@@ -1,9 +1,7 @@
 import {
   Body,
   Controller,
-  FileTypeValidator,
   Get,
-  MaxFileSizeValidator,
   Param,
   ParseFilePipe,
   ParseIntPipe,
@@ -20,7 +18,6 @@ import { PaginationDto } from 'src/common/dto';
 import { DailyEatingService } from './daily-eating.service';
 import { CreateDailyEatingDto, UpdateDailyEatingDto } from './dto';
 import { Express } from 'express';
-import { FileSizeValidation } from 'src/upload-file/pipes/file-size-validation.pipe';
 import { diskStorage } from 'multer';
 import { UploadOperations } from 'src/upload-file/utils';
 
@@ -48,6 +45,8 @@ export class DailyEatingController {
     foodImage: Express.Multer.File,
     @Body() createDailyEatingDto: CreateDailyEatingDto,
   ) {
+    console.log({ foodImage });
+
     return this.dailyEatingService.create(userId, createDailyEatingDto);
   }
 

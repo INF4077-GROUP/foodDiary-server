@@ -23,8 +23,6 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a user account.' })
   async register(@Body() authDto: AuthDto) {
-    console.log(authDto.name);
-    console.log(authDto.password);
     return this.authService.register(authDto);
   }
 
